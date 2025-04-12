@@ -1,0 +1,20 @@
+# Ignore credentials file
+backend/creds.py
+backend/.env
+
+
+# Ignore Python virtual environment folders (common practice)
+venv/
+*.venv/
+env/
+*.env/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
