@@ -220,7 +220,7 @@
             };
 
             try {
-                const response = await fetch('https://ad1e-2409-40c4-343-bfde-b8c6-3b86-9e14-c35f.ngrok-free.app/Spent-analysis', {
+                const response = await fetch('http://localhost:8000/Spent-analysis', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
