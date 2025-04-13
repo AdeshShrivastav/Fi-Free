@@ -122,7 +122,7 @@ class TaxRequest(BaseModel):
     hra: float
     deductions: float
 
-@app.post("/calculate/sip")
+@app.post("/calculate/mf")
 def sip(data: SIPRequest):
     r = data.annual_rate / 12 / 100
     n = data.tenure_years * 12
