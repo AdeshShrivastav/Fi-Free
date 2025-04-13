@@ -293,8 +293,8 @@ function attachFormHandler(type) {
 
     try {
       const endpoint =
-        type === 'mf' ? 'sip' :
-        type === 'fd' ? 'lumpsum' :
+        type === 'mf' ? 'mf' :
+        type === 'fd' ? 'fd' :
         type === 'ppf' ? 'ppf' :
         type === 'swp' ? 'swp' :
         type === 'ssy' ? 'ssy' :
