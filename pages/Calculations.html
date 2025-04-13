@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Financial calculators to help you plan your investments, loans, and expenses.">
+    <meta name="keywords" content="financial calculators, SIP calculator, EMI calculator, lumpsum calculator, loan analysis, spend plan">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href=’https://fonts.googleapis.com/css?family=Merienda’ rel=’stylesheet’>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1468686459067750"
+     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1468686459067750"
+     crossorigin="anonymous"></script>
+    <title>Fi-Free</title>
+    <link rel="stylesheet" href="../src/styles.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">FI-Free</div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="Calculations.html">Calculations</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+
+        <section class="features">
+            <a href="sip.html">
+            <div class="feature-card">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>SIP Calculator</h3>
+                <p>Calculate your SIP returns</p>
+            </div>
+            </a>
+            <a href="lumpsum.html">
+                <div class="feature-card">
+                    <i class="fa-solid fa-vault"></i>
+                    <h3>Lumpsum Calculator</h3>
+                    <p>Calculate your Lumpsum returns</p>
+                </div>
+            </a>
+            <a href="emi.html">
+                <div class="feature-card">
+                    <i class="fa-solid fa-calendar"></i>
+                    <h3>Emi calculator</h3>
+                    <p>Calculate EMI</p>
+                </div>
+            </a>
+            <a href="Homeloan.html" >
+            <div class="feature-card">
+                <i href = "Homeloan.html" class="fa-solid fa-house-chimney"></i>
+                <h3>loan-prepayment</h3>
+                <p> Be free from your loan's </p>
+            </div>
+        </a>
+            <a href="spend-plan.html">
+            <div href="spend-plan.html" class="feature-card">
+                <i href = "spend-plan.html" class="fa-solid fa-seedling"></i>
+                <h3>Spend Plan</h3>
+                <p>Spend your money wisely</p>
+            </div>
+        </a>
+        <a href="loananalysis.html" text-decoration="none">
+            <div class="feature-card">
+                <i class="fa-solid fa-coins"></i>
+                <h3>Loan Analysis</h3>
+                <p> Know that you are ready for Loan</p>
+            </div>
+        </a>
+        <a href="other.html" text-decoration="none">
+            <div class="feature-card">
+                <i class="fa-solid fa-calculator"></i>
+                <h3>All Other calculators</h3>
+
+            </div>
+        </a>
+        </section>
+
+    </main>
+    <footer class="main-footer">
+        <p>&copy; 2025 Fi-Free . All rights reserved.<br>
+        <b>Description</b> The responses are AI generated and may not be accurate. The information provided is for educational purposes only and should not be considered financial advice. Always consult with a qualified financial advisor before making any financial decisions.</p>
+
+    </footer>
+    <script>
+        const images = [
+    'src/personal-finance.png',
+    'src/OIP1.jpeg',
+    'src/OIP2.jpeg',
+    'src/Oip3.avif',
+  ];
+  let currentImageIndex = 0;
+  const sliderImage = document.querySelector('.hero-image img');
+
+  function changeImage() {
+    currentImageIndex = (currentImageIndex + 1) % images.length;
+    sliderImage.src = images[currentImageIndex];
+  }
+
+  setInterval(changeImage, 3000);
+    </script>
+</body>
+</html>

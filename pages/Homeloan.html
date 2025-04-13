@@ -4,7 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="src/styles.css">
+        <title>Fi-Free</title>
+    <meta name="description" content="Calculate and manage your home loan payments effectively.">
+    <meta name="keywords" content="home loan, loan calculator, mortgage calculator, loan prepayment">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1468686459067750"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../src/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -164,8 +170,8 @@
         <div class="logo">Fi-Free</div>
         <nav class="main-nav">
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="Calculations.html">Calculations</a></li>
             </ul>
         </nav>
     </header>
@@ -221,7 +227,7 @@
             };
 
             try {
-                const response = await fetch('https://ad1e-2409-40c4-343-bfde-b8c6-3b86-9e14-c35f.ngrok-free.app/calculate-prepayment', {
+                const response = await fetch('https://fi-free.onrender.com/calculate-prepayment', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)

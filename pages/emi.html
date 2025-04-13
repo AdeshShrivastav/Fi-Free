@@ -4,10 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="src/styles.css">
+        <title>EMI Calculator</title>
+    <meta name="description" content="Calculate EMI of your loan and manage your finances effectively.">
+    <meta name="keywords" content=" Emi calculator, loan, car loan, loan calculator, mortgage calculator, loan prepayment">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1468686459067750"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../src/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -164,63 +171,66 @@
         <div class="logo">Fi-Free</div>
         <nav class="main-nav">
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="Calculations.html">Calculations</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="main-content">
         <div class="form-section">
-            <h2>Monthly Spend-Plan</h2>
-            <form id="spendPlanForm">
-                <label>Salary: </label>
-                <input type="number" id="salary" required>
+            <h2>EMI-calculator</h2>
+            <form id="prepaymentForm">
+                <label>Loan Amount:</label>
+                <input type="number" id="loanAmount" required>
                 
-                <label>AGE: </label>
-                <input type="number" id="age" required>
-
-                <label>Location</label>
-                <input type="text" id="location" value="not provided">
-
-                <label>Job/Business Description</label>
-                <input type="text" id="job" value="not provided">
+                <label>Loan Duration (years):</label>
+                <input type="number" id="loanDuration" value="3" required>
                 
-                <button type="submit">submit</button>
+                <label>Interest Rate (%):</label>
+                <input type="number" id="interestRate" value="7" required>
+
+                <button type="submit">Calculate</button>
             </form>
-        </div>
 
+        </div>
         <div class="response-section" id="responseSection">
             <h3>Response:</h3>
-            <div class="loader" id="loadingSpinner"></div>
-            <div id="responseContent"></div>
+            <div id="emiValue" style="font-size: 2rem;"></div>
+            <div class="loader" id="loadingSpinner"></div> <!-- Loader element -->
+            <canvas id="myPieChart" width="20" height="20" style="width:50px; height:50px;"></canvas>
+            <div id="responseContent"></div> <!-- Results will go here -->
         </div>
     </div>
 
     <script>
         const mainContent = document.querySelector('.main-content'); // Get the parent container
-        const spendPlanForm = document.getElementById('spendPlanForm');
+        const prepaymentForm = document.getElementById('prepaymentForm');
         const responseContent = document.getElementById('responseContent');
         const loadingSpinner = document.getElementById('loadingSpinner');
-        const submitButton = spendPlanForm.querySelector('button[type="submit"]');
+        const submitButton = prepaymentForm.querySelector('button[type="submit"]');
         const responseSection = document.getElementById('responseSection'); // Added response section selector
+        let myPieChart;
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+        const responseText = document.getElementById('responseContent');
 
-        spendPlanForm.addEventListener('submit', async (e) => {
+        prepaymentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Disable button and show loader
             submitButton.disabled = true;
             responseContent.innerHTML = ''; // Clear previous results
             loadingSpinner.style.display = 'block'; // Show spinner
-            
+
             const data = {
-                salary: parseFloat(document.getElementById('salary').value),
-                age: parseInt(document.getElementById('age').value),
-                location: document.getElementById('location').value,
-                job: document.getElementById('job').value
+                principal: parseFloat(document.getElementById('loanAmount').value),
+                tenure_years: parseInt(document.getElementById('loanDuration').value),
+                annual_rate: parseFloat(document.getElementById('interestRate').value),
+
             };
 
             try {
-                const response = await fetch('https://ad1e-2409-40c4-343-bfde-b8c6-3b86-9e14-c35f.ngrok-free.app/Spent-analysis', {
+                const response = await fetch('https://fi-free.onrender.com/calculate/emi', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
@@ -230,10 +240,63 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const result = await response.json();
-                // Display the raw result within <pre> tags to preserve formatting
-                responseContent.innerHTML = `<pre>${result.result}</pre>`;
-                // Scroll to the response section
-                responseSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                console.log("API Response:", result); // Log the entire response
+
+                if (result && result.emi && result.principal && result.interest) {
+                    const emi = result.emi;
+                    const principal = result.principal;
+                    const interest = result.interest;
+
+                    // Destroy existing chart if it exists
+                    if (myPieChart) {
+                        myPieChart.destroy();
+                    }
+
+                    // Create pie chart
+                    myPieChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Principal', 'Interest'],
+                            datasets: [{
+                                data: [principal, interest],
+                                backgroundColor: [
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)'
+                                ],
+                                borderWidth: 1,
+                                radius: '70%',
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#fff' // Change font color to white
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Display the result in text format
+                    document.getElementById('myPieChart').style.height = '50px';
+                    document.getElementById('myPieChart').style.width = '50px';
+                    document.getElementById('emiValue').innerHTML = `<p>EMI: ${emi}</p>`;
+                    responseText.style.color = '#fff';
+                    responseText.innerHTML = `
+                        <p>Principal: ${principal}</p>
+                        <p>Interest: ${interest}</p>
+                    `;
+
+                    // Scroll to the response section
+
+                    responseSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    responseText.innerHTML = "Error: Could not retrieve data from the API. Check the console for details.";
+                    console.error("Error: Invalid API response", result);
+                }
 
             } catch (error) {
                 console.error('Error:', error);

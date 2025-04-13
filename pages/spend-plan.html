@@ -4,9 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="src/styles.css">
+    <meta name="description" content="Create a spend plan to manage your finances wisely.">
+    <meta name="keywords" content="spend plan, budget, expense tracker, financial planning, mutual funds, stocks">
+    <link rel="stylesheet" href="../src/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1468686459067750"
+     crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -74,9 +78,10 @@
             width: 100%; /* Take full width of parent */
             max-width: 700px; /* Limit max width for better centering */
             box-sizing: border-box; /* Include padding and border in width */
+            /* Removed margin-top: 15% from form-section */
         }
 
-        input, select { /* Added select styling */
+        input {
             width: 100%;
             margin: 5px 0;
             padding: 8px;
@@ -155,18 +160,6 @@
         h2, h3, label { /* Ensure these have contrast */
            color: #ecf0f1; /* Light color for text on dark section background */
         }
-
-        /* Style adjustments for select dropdown */
-        select {
-            width: 100%;
-            margin: 5px 0;
-            padding: 8px;
-            background-color: #fff; /* White background for dropdown */
-            color: #333; /* Dark text */
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
     </style>
 </head>
 
@@ -175,82 +168,63 @@
         <div class="logo">Fi-Free</div>
         <nav class="main-nav">
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="Calculations.html">Calculations</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="main-content">
         <div class="form-section">
-            <h2>Loan Analysis</h2>
-            <form id="prepaymentForm">
-                <label>Loan Amount you want:</label>
-                <input type="float" id="loanAmount" required>
-
-                <label>Loan Duration (in years):</label>
-                <input type="float" id="loanDuration" required>
-
-                <label>Interest Rate (%):</label>
-                <input type="float" id="interestRate" value="7" required>
-
-                <label>Monthly Salary:</label>
-                <input type="float" id="salary" required>
-
-                <label>AGE:</label>
-                <input type="float" id="age" required>
-
-                <label>Your total expense in a month :</label>
-                <input type="float" id="exp" required>
-
-                <label> Loan Category </label>
-                <select id="loanCategory" required>
-                    <option value="Home Loan">Home Loan</option>
-                    <option value="Car Loan">Car Loan</option>
-                    <option value="Personal Loan">Personal Loan</option>
-                    <option value="Education Loan">Education Loan</option>
-                    <option value="Business Loan">Business Loan</option>
-                    <option value="Other">Other</option>
-                </select>
+            <h2>Monthly Spend-Plan</h2>
+            <form id="spendPlanForm">
+                <label>Salary: </label>
+                <input type="number" id="salary" required>
                 
-                <button type="submit">Calculate</button>
-            </form>
+                <label>AGE: </label>
+                <input type="number" id="age" required>
 
+                <label>Location</label>
+                <input type="text" id="location" value="not provided">
+
+                <label>Job/Business Description</label>
+                <input type="text" id="job" value="not provided">
+                
+                <button type="submit">submit</button>
+            </form>
         </div>
+
         <div class="response-section" id="responseSection">
             <h3>Response:</h3>
-            <div class="loader" id="loadingSpinner"></div> <!-- Loader element -->
-            <div id="responseContent"></div> <!-- Results will go here -->
+            <div class="loader" id="loadingSpinner"></div>
+            <div id="responseContent"></div>
         </div>
     </div>
 
     <script>
         const mainContent = document.querySelector('.main-content'); // Get the parent container
-        const prepaymentForm = document.getElementById('prepaymentForm');
+        const spendPlanForm = document.getElementById('spendPlanForm');
         const responseContent = document.getElementById('responseContent');
         const loadingSpinner = document.getElementById('loadingSpinner');
-        const submitButton = prepaymentForm.querySelector('button[type="submit"]');
+        const submitButton = spendPlanForm.querySelector('button[type="submit"]');
+        const responseSection = document.getElementById('responseSection'); // Added response section selector
 
-        prepaymentForm.addEventListener('submit', async (e) => {
+        spendPlanForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Disable button and show loader
+
             submitButton.disabled = true;
             responseContent.innerHTML = ''; // Clear previous results
             loadingSpinner.style.display = 'block'; // Show spinner
-
+            
             const data = {
-                loan_amount: parseFloat(document.getElementById('loanAmount').value),
-                loan_duration: parseInt(document.getElementById('loanDuration').value),
-                interest: parseFloat(document.getElementById('interestRate').value),
                 salary: parseFloat(document.getElementById('salary').value),
-                exp: parseFloat(document.getElementById('exp').value),
                 age: parseInt(document.getElementById('age').value),
-                loan_category: document.getElementById('loanCategory').value // Added loan category
+                location: document.getElementById('location').value,
+                job: document.getElementById('job').value
             };
 
             try {
-                const response = await fetch('https://ad1e-2409-40c4-343-bfde-b8c6-3b86-9e14-c35f.ngrok-free.app/Loan-Analysis', {
+                const response = await fetch('https://fi-free.onrender.com/Spent-analysis', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
@@ -268,7 +242,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 responseContent.innerHTML = `Error occurred: ${error.message}. Please check the console.`;
-                 // Scroll to the response section even on error
+                // Scroll to the response section even on error
                 responseSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } finally {
                 // Hide loader and re-enable button regardless of success or error

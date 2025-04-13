@@ -44,6 +44,231 @@ class SpentData(BaseModel):
     location: str
     job: str
 
+class EMICalculationRequest(BaseModel):
+    principal: float
+    annual_rate: float  # Annual interest rate in %
+    tenure_years: int   # Loan tenure in years
+
+class SIPCalculationRequest(BaseModel):
+    monthly_investment: float
+    annual_rate: float  # Annual return rate in %
+    tenure_years: int
+
+class LumpsumCalculationRequest(BaseModel):
+    investment: float
+    annual_rate: float  # Annual return rate in %
+    tenure_years: int
+
+
+
+# Base Models
+class SIPRequest(BaseModel):
+    monthly_investment: float
+    annual_rate: float
+    tenure_years: int
+
+class LumpsumRequest(BaseModel):
+    investment: float
+    annual_rate: float
+    tenure_years: int
+
+class PPFRequest(BaseModel):
+    investment: float
+    annual_rate: float
+    tenure_years: int
+
+class SWPRequest(BaseModel):
+    investment: float
+    withdrawal: float
+    annual_rate: float
+
+class SSYRequest(BaseModel):
+    investment: float
+    annual_rate: float
+    tenure_years: int
+
+class EPFRequest(BaseModel):
+    salary: float
+    employer_percent: float
+    annual_rate: float
+    tenure_years: int
+
+class NPSRequest(BaseModel):
+    monthly_investment: float
+    annual_rate: float
+    current_age: int
+    retirement_age: int
+
+class HRARequest(BaseModel):
+    salary: float
+    hra: float
+    rent: float
+    metro: str
+
+class SIRequest(BaseModel):
+    principal: float
+    annual_rate: float
+    tenure_years: int
+
+class CIRequest(BaseModel):
+    principal: float
+    annual_rate: float
+    tenure_years: int
+    frequency: int
+
+class TaxRequest(BaseModel):
+    income: float
+    investment: float
+    hra: float
+    deductions: float
+
+@app.post("/calculate/sip")
+def sip(data: SIPRequest):
+    r = data.annual_rate / 12 / 100
+    n = data.tenure_years * 12
+    fv = data.monthly_investment * (((1 + r)**n - 1) * (1 + r) / r)
+    return {"future_value": round(fv, 2)}
+
+@app.post("/calculate/lumpsum")
+def lumpsum(data: LumpsumRequest):
+    fv = data.investment * ((1 + data.annual_rate / 100) ** data.tenure_years)
+    return {"future_value": round(fv, 2)}
+
+@app.post("/calculate/ppf")
+def ppf(data: PPFRequest):
+    r = data.annual_rate / 100
+    n = data.tenure_years
+    fv = data.investment * ((1 + r) ** n)
+    return {"future_value": round(fv, 2)}
+
+@app.post("/calculate/swp")
+def swp(data: SWPRequest):
+    r = data.annual_rate / 12 / 100
+    months = 0
+    value = data.investment
+    while value > 0:
+        value *= (1 + r)
+        value -= data.withdrawal
+        if value <= 0:
+            break
+        months += 1
+    return {"months": months, "years": round(months / 12, 2)}
+
+@app.post("/calculate/ssy")
+def ssy(data: SSYRequest):
+    r = data.annual_rate / 100
+    n = data.tenure_years
+    fv = data.investment * ((1 + r) ** n)
+    return {"future_value": round(fv, 2)}
+
+@app.post("/calculate/epf")
+def epf(data: EPFRequest):
+    monthly_contrib = data.salary * data.employer_percent / 100
+    n = data.tenure_years * 12
+    r = data.annual_rate / 12 / 100
+    fv = monthly_contrib * ((1 + r) ** n - 1) * (1 + r) / r
+    return {"future_value": round(fv, 2)}
+
+@app.post("/calculate/nps")
+def nps(data: NPSRequest):
+    n = (data.retirement_age - data.current_age) * 12
+    r = data.annual_rate / 12 / 100
+    fv = data.monthly_investment * (((1 + r)**n - 1) * (1 + r) / r)
+    return {"future_value": round(fv, 2)}
+
+@app.post("/calculate/hra")
+def hra(data: HRARequest):
+    basic = data.salary
+    hra_received = data.hra
+    rent_paid = data.rent
+    metro = data.metro.lower() == "yes"
+    actual_hra = hra_received
+    rent_minus_10perc = rent_paid - (0.1 * basic)
+    metro_limit = 0.5 * basic if metro else 0.4 * basic
+    exemption = min(actual_hra, rent_minus_10perc, metro_limit)
+    return {"exempt_hra": round(exemption, 2)}
+
+@app.post("/calculate/si")
+def si(data: SIRequest):
+    si = data.principal * data.annual_rate * data.tenure_years / 100
+    return {"simple_interest": round(si, 2)}
+
+@app.post("/calculate/ci")
+def ci(data: CIRequest):
+    r = data.annual_rate / (100 * data.frequency)
+    n = data.frequency * data.tenure_years
+    amount = data.principal * ((1 + r) ** n)
+    return {"compound_interest": round(amount - data.principal, 2), "total_value": round(amount, 2)}
+
+@app.post("/calculate/tax")
+def tax(data: TaxRequest):
+    taxable_income = data.income - (data.investment + data.hra + data.deductions)
+    slabs = [(250000, 0), (250000, 0.05), (500000, 0.2), (float('inf'), 0.3)]
+    tax = 0
+    for limit, rate in slabs:
+        if taxable_income > limit:
+            tax += limit * rate
+            taxable_income -= limit
+        else:
+            tax += taxable_income * rate
+            break
+    return {"tax": round(tax, 2)}
+# ------------------------------
+# 💰 EMI Calculator
+# ------------------------------
+
+@app.post("/calculate/emi")
+def calculate_emi(data: EMICalculationRequest):
+    P = data.principal
+    r = data.annual_rate / 12 / 100  # monthly interest rate
+    n = data.tenure_years * 12       # total number of payments
+
+    emi = (P * r * pow(1 + r, n)) / (pow(1 + r, n) - 1)
+    total_payment = emi * n
+    total_interest = total_payment - P
+
+    return {
+        "emi": round(emi, 2),
+        "principal": round(P, 2),
+        "interest": round(total_interest, 2)
+    }
+
+# ------------------------------
+# 📈 SIP Calculator
+# ------------------------------
+
+@app.post("/calculate/sip")
+def calculate_sip(data: SIPCalculationRequest):
+    P = data.monthly_investment
+    r = data.annual_rate / 12 / 100
+    n = data.tenure_years * 12
+
+    future_value = P * ((pow(1 + r, n) - 1) * (1 + r)) / r
+
+    return {
+        "future_value": round(future_value, 2),
+        "invested_amount": round(P * n, 2),
+        "returns": round(future_value - (P * n), 2)
+    }
+
+# ------------------------------
+# 📊 Lumpsum Calculator
+# ------------------------------
+
+@app.post("/calculate/lumpsum")
+def calculate_lumpsum(data: LumpsumCalculationRequest):
+    P = data.investment
+    r = data.annual_rate / 100
+    n = data.tenure_years
+
+    future_value = P * pow(1 + r, n)
+
+    return {
+        "future_value": round(future_value, 2),
+        "invested_amount": round(P, 2),
+        "returns": round(future_value - P, 2)
+    }
+
 @app.post("/calculate-prepayment")
 async def calculate_prepayment(data: LoanData):
     # Optimized prompt for clarity and structure
