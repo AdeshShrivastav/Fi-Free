@@ -129,7 +129,7 @@ def sip(data: SIPRequest):
     fv = data.monthly_investment * (((1 + r)**n - 1) * (1 + r) / r)
     return {"future_value": round(fv, 2)}
 
-@app.post("/calculate/lumpsum")
+@app.post("/calculate/fd")
 def lumpsum(data: LumpsumRequest):
     fv = data.investment * ((1 + data.annual_rate / 100) ** data.tenure_years)
     return {"future_value": round(fv, 2)}
